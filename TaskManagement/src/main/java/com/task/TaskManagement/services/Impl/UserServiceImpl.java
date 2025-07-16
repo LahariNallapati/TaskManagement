@@ -3,11 +3,9 @@ package com.task.TaskManagement.services.Impl;
 import com.task.TaskManagement.Entity.ClientEntity;
 import com.task.TaskManagement.Entity.UsersEntity;
 import com.task.TaskManagement.dao.UsersRepository;
-import com.task.TaskManagement.dto.LoginRequest;
-import com.task.TaskManagement.dto.LoginResponse;
-import com.task.TaskManagement.dto.ResponseWrapper;
-import com.task.TaskManagement.dto.UserDto;
+import com.task.TaskManagement.dto.*;
 import com.task.TaskManagement.services.UserService;
+import com.task.TaskManagement.utils.EmailService;
 import com.task.TaskManagement.utils.JwtUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
@@ -30,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private  PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtils jwtUtil;
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public ResponseWrapper<UsersEntity> createUser(UserDto dto) {
@@ -73,6 +73,28 @@ public class UserServiceImpl implements UserService {
         String token = jwtUtil.generateToken(user.getEmail());
 
         return new LoginResponse(token, "Login successful");
+    }
+
+    @Override
+    public void sendResetLink(String email) {
+        UsersEntity user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Email not found"));
+
+        String token = jwtUtil.generateToken(email);
+        String resetLink = "http://localhost:8080/reset-password?token=" + token;
+        emailService.sendEmail(email, "Reset Password", "Click to reset: " + resetLink);
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordRequest request) {
+        String email = jwtUtil.extractUsername(request.getToken());
+        UsersEntity user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setUpdatedAt(LocalDateTime.now());
+        usersRepository.save(user);
+
     }
 
     @Override
