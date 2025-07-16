@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Clientdto {
 
-    private int clientId;
+    private Integer clientId;
     private String clientName;
     private String industry;
     private String gstNumber;
