@@ -1,8 +1,15 @@
 package com.task.TaskManagement.controllers;
 
+import com.task.TaskManagement.Entity.AuditLogsEntity;
 import com.task.TaskManagement.Entity.ClientEntity;
+import com.task.TaskManagement.annotations.AdminOnly;
+import com.task.TaskManagement.dto.AuditLogsdto;
+import com.task.TaskManagement.dto.Clientdto;
+import com.task.TaskManagement.dto.ResponseWrapper;
 import com.task.TaskManagement.services.ClientService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,31 +23,53 @@ public class ClientController {
     private ClientService clientService;
 
     @PostMapping
-    public ResponseEntity<ClientEntity> createClient(@RequestBody ClientEntity clientEntity){
-        return ResponseEntity.ok(clientService.save(clientEntity));
+    @AdminOnly
+    public ResponseEntity<ResponseWrapper<ClientEntity>> createClient( @RequestBody Clientdto dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(clientService.createClient(dto));
     }
 
+    @PutMapping("/{id}")
+    @AdminOnly
+    public ResponseEntity<ResponseWrapper<ClientEntity>> updateAudits(@PathVariable Integer id, @RequestBody Clientdto dto) {
+        return ResponseEntity.ok(clientService.updateClient(id, dto));
+    }
+    @DeleteMapping("/{id}")
+    @AdminOnly
+    public ResponseEntity<ResponseWrapper<String>> deleteAudits(@PathVariable Integer id) {
+        return ResponseEntity.ok(clientService.deleteClient(id));
+    }
+
+    @GetMapping("/{id}")
+    @AdminOnly
+    public ResponseEntity<ResponseWrapper<ClientEntity>> getClientById(@PathVariable Integer id) {
+        return ResponseEntity.ok(clientService.getClientById(id));
+    }
     @GetMapping
-    public ResponseEntity<List<ClientEntity>> getAllClients(){
-        return ResponseEntity.ok(clientService.getAll());
+    @AdminOnly
+    public ResponseEntity<ResponseWrapper<List<ClientEntity>>> getAllclients () {
+
+        return ResponseEntity.ok(clientService.getAllClients());
     }
 
-    @GetMapping("/{clientId}")
-    public ResponseEntity<ClientEntity> getClientById(@PathVariable int clientId){
-        return clientService.getByUserId(clientId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("search")
+    @AdminOnly
+    public ResponseEntity<ResponseWrapper<List<ClientEntity>>> searchClients(@RequestParam String name, @RequestParam(required = false) Integer pageNo,
+                                                        @RequestParam(required = false) Integer pageSize) {
+//
+//        if (pageNo == null || pageSize == null) {
+//            pageNo = 1;
+//            pageSize = 10;
+//        }
+        if (pageNo < 1 || pageNo > 10) {
+            throw new IllegalArgumentException("Page number must be between 1 and 10");
+        }
+        if (pageSize < 1 || pageSize > 100) {
+            throw new IllegalArgumentException("Page size must be between 1 and 100");
+        }
 
+
+        return  ResponseEntity.ok(clientService.searchClients(name, pageNo, pageSize));
     }
 
-    @PutMapping("/{clientId}")
-    public ResponseEntity<ClientEntity> update(@PathVariable int clientId, @RequestBody ClientEntity clientEntity){
-        return ResponseEntity.ok(clientService.update(clientId, clientEntity));
-    }
 
-    @DeleteMapping("/{clientId}")
-    public ResponseEntity<String> delete(@PathVariable int clientId){
-        clientService.delete(clientId);
-        return ResponseEntity.ok("Client deleted with Id: " + clientId);
-    }
 }

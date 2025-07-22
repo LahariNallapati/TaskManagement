@@ -28,6 +28,23 @@ public class ClientEntity {
 
     @Column(length = 1000)
     private String remarks;
+    private boolean deleted = false;
+
+    public List<ProjectsEntity> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<ProjectsEntity> projects) {
+        this.projects = projects;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
     public int getClientId() {
         return clientId;

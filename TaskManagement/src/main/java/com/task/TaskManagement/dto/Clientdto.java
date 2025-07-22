@@ -19,13 +19,16 @@ public class Clientdto {
     private String contactPerson;
     private String contactNumber;
     private String contactEmail;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
     private String remarks;
+    private boolean deleted = false;
 
-    public int getClientId() {
+    public Integer getClientId() {
         return clientId;
     }
 
-    public void setClientId(int clientId) {
+    public void setClientId(Integer clientId) {
         this.clientId = clientId;
     }
 
@@ -93,11 +96,35 @@ public class Clientdto {
         this.contactEmail = contactEmail;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public String getRemarks() {
         return remarks;
     }
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
