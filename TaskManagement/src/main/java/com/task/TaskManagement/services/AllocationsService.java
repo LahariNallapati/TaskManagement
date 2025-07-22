@@ -15,4 +15,5 @@ public interface AllocationsService {
     ResponseWrapper<String> deleteAllocation(Integer id);
     ResponseWrapper<AllocationsEntity> getAllocationById(Integer id);
     ResponseWrapper<List<AllocationsEntity>> getAllAllocations();
+    List<AllocationsEntity> getAllocationsPageOnly(int pageNo, int pageSize);
 }

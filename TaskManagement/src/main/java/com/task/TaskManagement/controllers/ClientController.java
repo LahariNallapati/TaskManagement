@@ -2,6 +2,7 @@ package com.task.TaskManagement.controllers;
 
 import com.task.TaskManagement.Entity.AuditLogsEntity;
 import com.task.TaskManagement.Entity.ClientEntity;
+import com.task.TaskManagement.Entity.UsersEntity;
 import com.task.TaskManagement.annotations.AdminOnly;
 import com.task.TaskManagement.dto.AuditLogsdto;
 import com.task.TaskManagement.dto.Clientdto;
@@ -30,12 +31,12 @@ public class ClientController {
 
     @PutMapping("/{id}")
     @AdminOnly
-    public ResponseEntity<ResponseWrapper<ClientEntity>> updateAudits(@PathVariable Integer id, @RequestBody Clientdto dto) {
+    public ResponseEntity<ResponseWrapper<ClientEntity>> updateClients(@PathVariable Integer id, @RequestBody Clientdto dto) {
         return ResponseEntity.ok(clientService.updateClient(id, dto));
     }
     @DeleteMapping("/{id}")
     @AdminOnly
-    public ResponseEntity<ResponseWrapper<String>> deleteAudits(@PathVariable Integer id) {
+    public ResponseEntity<ResponseWrapper<String>> deleteClients(@PathVariable Integer id) {
         return ResponseEntity.ok(clientService.deleteClient(id));
     }
 
@@ -60,6 +61,7 @@ public class ClientController {
 //            pageNo = 1;
 //            pageSize = 10;
 //        }
+
         if (pageNo < 1 || pageNo > 10) {
             throw new IllegalArgumentException("Page number must be between 1 and 10");
         }
@@ -70,6 +72,14 @@ public class ClientController {
 
         return  ResponseEntity.ok(clientService.searchClients(name, pageNo, pageSize));
     }
+    @GetMapping("/paged")
+    public ResponseEntity<ResponseWrapper<List<ClientEntity>>> getClientByPage(
+            @RequestParam(defaultValue = "1") int pageNo) {
 
+        int pageSize = 5;
+        List<ClientEntity> client = clientService.getClientPageOnly(pageNo - 1, pageSize); // Page index is 0-based
+
+        return ResponseEntity.ok(new ResponseWrapper<>("Client fetched successfully", client));
+    }
 
 }

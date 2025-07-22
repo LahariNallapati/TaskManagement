@@ -23,5 +23,5 @@ public interface ClientService {
 
     ResponseWrapper<List<ClientEntity>> getAllClients();
 
-
+    List<ClientEntity> getClientPageOnly(int pageNo, int pageSize);
 }

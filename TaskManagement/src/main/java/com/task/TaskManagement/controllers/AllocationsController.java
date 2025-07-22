@@ -21,7 +21,7 @@ public class AllocationsController {
     @Autowired
     private AllocationsService allocationsService;
 
-////
+
 //@PostMapping
 //public ResponseEntity<AllocationsEntity> create(@RequestBody AllocationsEntity allocationsEntity) {
 //    return ResponseEntity.ok(allocationsService.save(allocationsEntity));
@@ -68,5 +68,14 @@ public ResponseEntity<ResponseWrapper<AllocationsEntity>> createAllocation(@Vali
 
             return ResponseEntity.ok(allocationsService.getAllAllocations());
         }
+    @GetMapping("/paged")
+    public ResponseEntity<ResponseWrapper<List<AllocationsEntity>>> getAllocationsByPage(
+            @RequestParam(defaultValue = "1") int pageNo) {
+
+        int pageSize = 5;
+        List<AllocationsEntity> allocations = allocationsService.getAllocationsPageOnly(pageNo - 1, pageSize); // Page index is 0-based
+
+        return ResponseEntity.ok(new ResponseWrapper<>("Allocations fetched successfully", allocations));
+    }
 
 }

@@ -11,7 +11,9 @@ import com.task.TaskManagement.services.ClientService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,6 +41,13 @@ public class ClientServiceImpl implements ClientService {
     public ResponseWrapper<List<ClientEntity>> getAllClients() {
         List<ClientEntity> list =clientRepository.findAll();
         return new ResponseWrapper<>("All users fetched successfully", list);
+    }
+
+    @Override
+    public List<ClientEntity> getClientPageOnly(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<ClientEntity> page = clientRepository.findAll(pageable);
+        return page.getContent();
     }
 
     @Override
@@ -87,7 +96,7 @@ public class ClientServiceImpl implements ClientService {
             client.add(clientEntity);
         });
 
-        return new ResponseWrapper<>("All users fetched successfully", client);
+        return new ResponseWrapper<>("Client Detailes fetched successfully", client);
 
     }
 }

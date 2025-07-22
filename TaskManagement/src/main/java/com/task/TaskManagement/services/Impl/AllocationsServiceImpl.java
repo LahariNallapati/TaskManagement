@@ -11,6 +11,9 @@ import com.task.TaskManagement.services.AllocationsService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -68,6 +71,13 @@ public class AllocationsServiceImpl implements AllocationsService {
     public ResponseWrapper<List<AllocationsEntity>> getAllAllocations() {
         List<AllocationsEntity> list = allocationsRepository.findAll();
         return new ResponseWrapper<>("All clients fetched successfully", list);
+    }
+
+    @Override
+    public List<AllocationsEntity> getAllocationsPageOnly(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<AllocationsEntity> task = allocationsRepository.findAll(pageable);
+        return task.getContent();
     }
 
     @Override

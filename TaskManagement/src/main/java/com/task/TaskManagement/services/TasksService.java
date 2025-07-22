@@ -10,9 +10,22 @@ import java.util.List;
 
 public interface TasksService {
     ResponseWrapper<TasksEntity> createTask(TasksDto dto);
+
     ResponseWrapper<TasksEntity> updateTask(Integer id, TasksDto dto);
+
     //ResponseWrapper<String> deleteProject(Integer id);
     ResponseWrapper<String> deleteTask(Integer id);
+
     ResponseWrapper<TasksEntity> getTaskById(Integer id);
+
     ResponseWrapper<List<TasksEntity>> getAllTasks();
+
+    ResponseWrapper<List<TasksEntity>> searchTasks(String name, Integer pageNo, Integer pageSize);
+
+    List<TasksEntity> getTasksPageOnly(int pageNo, int pageSize);
+
+    ResponseWrapper<TasksDto> markTaskAsComplete(Integer taskId);
+
+    List<TasksEntity> filterTasks(String projectName, String status);
+
 }

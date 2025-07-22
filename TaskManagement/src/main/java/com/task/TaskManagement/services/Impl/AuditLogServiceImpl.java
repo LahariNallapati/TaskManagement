@@ -1,9 +1,6 @@
 package com.task.TaskManagement.services.Impl;
 
-import com.task.TaskManagement.Entity.AuditLogsEntity;
-import com.task.TaskManagement.Entity.ClientEntity;
-import com.task.TaskManagement.Entity.ProjectsEntity;
-import com.task.TaskManagement.Entity.UsersEntity;
+import com.task.TaskManagement.Entity.*;
 import com.task.TaskManagement.dao.AuditLogsRepository;
 import com.task.TaskManagement.dao.UsersRepository;
 import com.task.TaskManagement.dto.AuditLogsdto;
@@ -12,6 +9,9 @@ import com.task.TaskManagement.services.AuditLogsService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -52,6 +52,18 @@ public class AuditLogServiceImpl implements AuditLogsService {
     public ResponseWrapper<List<AuditLogsEntity>> getAllAuditLogs() {
         List<AuditLogsEntity> list = auditLogsRepository.findAll();
         return new ResponseWrapper<>("All Audits fetched successfully", list);
+    }
+
+    @Override
+    public List<AuditLogsEntity> getAuditsPageOnly(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<AuditLogsEntity> task =auditLogsRepository.findAll(pageable);
+        return task.getContent();
+    }
+
+    @Override
+    public List<AuditLogsEntity> filterAuditLogs(String userName, String operation, LocalDateTime startDate, LocalDateTime endDate) {
+        return auditLogsRepository.filterAuditLogs(userName, operation, startDate, endDate);
     }
 
     @Override
