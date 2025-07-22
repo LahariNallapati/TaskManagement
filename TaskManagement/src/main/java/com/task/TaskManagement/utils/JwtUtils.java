@@ -9,6 +9,7 @@ import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtils {
@@ -17,11 +18,13 @@ public class JwtUtils {
 
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
-    public String generateToken(String email) {
+    public String generateToken(String email,boolean isAdmin) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
+                .addClaims(Map.of("isAdmin", isAdmin ? "YES" : "NO"))
                 .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
+             //   .setExpiration(Date.from(Instant.now().plus(10, ChronoUnit.MINUTES)))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -32,7 +35,15 @@ public class JwtUtils {
                 .getBody()
                 .getSubject();
     }
+    public String extractEmail(String token) {
+        return getAllClaims(token).getSubject();
+    }
 
+    public Claims getAllClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build()
